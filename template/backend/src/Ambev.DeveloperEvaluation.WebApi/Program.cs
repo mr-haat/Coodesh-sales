@@ -1,4 +1,5 @@
 using Ambev.DeveloperEvaluation.Application;
+using Ambev.DeveloperEvaluation.Application.Common;
 using Ambev.DeveloperEvaluation.Common.HealthChecks;
 using Ambev.DeveloperEvaluation.Common.Logging;
 using Ambev.DeveloperEvaluation.Common.Security;
@@ -39,6 +40,9 @@ public class Program
             builder.Services.AddJwtAuthentication(builder.Configuration);
 
             builder.RegisterDependencies();
+
+            builder.Services.Configure<PaginationSettings>(
+                builder.Configuration.GetSection(PaginationSettings.SectionName));
 
             builder.Services.AddAutoMapper(typeof(Program).Assembly, typeof(ApplicationLayer).Assembly);
 
