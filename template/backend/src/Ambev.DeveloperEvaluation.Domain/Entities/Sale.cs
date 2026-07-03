@@ -91,4 +91,46 @@ public class Sale : BaseEntity
             Errors = result.Errors.Select(o => (ValidationErrorDetail)o)
         };
     }
+
+    /// <summary>
+    /// Adds an item to the sale, applying its discount rules and updating the sale total.
+    /// </summary>
+    /// <param name="item">The item to add to the sale.</param>
+    public void AddItem(SaleItem item)
+    {
+        item.ApplyDiscountRules();
+        Items.Add(item);
+        RecalculateTotal();
+    }
+
+    /// <summary>
+    /// Recalculates the total amount of the sale, considering only the items that are not cancelled.
+    /// </summary>
+    public void RecalculateTotal()
+    {
+        TotalAmount = Items.Where(item => !item.IsCancelled).Sum(item => item.Total);
+    }
+
+    /// <summary>
+    /// Marks the sale as cancelled.
+    /// </summary>
+    public void Cancel()
+    {
+        IsCancelled = true;
+        UpdatedAt = DateTime.UtcNow;
+    }
+
+    /// <summary>
+    /// Cancels a single item of the sale and updates the sale total.
+    /// </summary>
+    /// <param name="itemId">The identifier of the item to cancel.</param>
+    public void CancelItem(Guid itemId)
+    {
+        var item = Items.FirstOrDefault(i => i.Id == itemId)
+            ?? throw new DomainException($"Item {itemId} was not found in sale {Id}.");
+
+        item.Cancel();
+        RecalculateTotal();
+        UpdatedAt = DateTime.UtcNow;
+    }
 }

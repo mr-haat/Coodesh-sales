@@ -1,4 +1,5 @@
 using Ambev.DeveloperEvaluation.Domain.Common;
+using Ambev.DeveloperEvaluation.Domain.Services;
 
 namespace Ambev.DeveloperEvaluation.Domain.Entities;
 
@@ -48,4 +49,25 @@ public class SaleItem : BaseEntity
     /// Gets or sets a value indicating whether the item has been cancelled.
     /// </summary>
     public bool IsCancelled { get; set; }
+
+    /// <summary>
+    /// Applies the quantity-based discount rules and recalculates the item total.
+    /// </summary>
+    /// <remarks>
+    /// The applicable discount rate is defined by <see cref="SaleDiscountPolicy"/>.
+    /// </remarks>
+    public void ApplyDiscountRules()
+    {
+        var grossAmount = Quantity * UnitPrice;
+        Discount = Math.Round(grossAmount * SaleDiscountPolicy.GetRateFor(Quantity), 2);
+        Total = grossAmount - Discount;
+    }
+
+    /// <summary>
+    /// Marks the item as cancelled.
+    /// </summary>
+    public void Cancel()
+    {
+        IsCancelled = true;
+    }
 }
