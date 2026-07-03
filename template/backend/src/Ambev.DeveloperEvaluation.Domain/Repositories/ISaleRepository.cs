@@ -32,6 +32,14 @@ public interface ISaleRepository
     Task<Sale?> GetBySaleNumberAsync(string saleNumber, CancellationToken cancellationToken = default);
 
     /// <summary>
+    /// Retrieves a page of sales matching the given filter
+    /// </summary>
+    /// <param name="filter">The pagination, ordering and filtering options</param>
+    /// <param name="cancellationToken">Cancellation token</param>
+    /// <returns>The matching sales and the total number of sales for the filter</returns>
+    Task<(IReadOnlyList<Sale> Sales, int TotalCount)> ListAsync(SaleListFilter filter, CancellationToken cancellationToken = default);
+
+    /// <summary>
     /// Updates an existing sale in the repository
     /// </summary>
     /// <param name="sale">The sale to update</param>
